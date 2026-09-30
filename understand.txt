@@ -1,0 +1,15 @@
+This file is for understanding the project structure and parts
+so basically in this project we are making a RAG application which will retrieve data given and respond accordingly. We have provided it with Poornima Circulum and SYllabus of 2028 in which there are 303 pages and we can ask questions to the chatbot according to it. So we first seperate our dataset pdf from modified chunked FAISS one because it is raw pdf so we store it in raw_pdfs file. Then we create a ingest.py file in which we read every page and convert the pdf into plain text respectively for better understanding of model. 
+
+KEY LEARNINGS FROM INGEST.PY:
+1) Imports path and pdf reader
+2) Uses glob(.*pdf) for finding any pdf present in current and subdirectories
+3)Creates a document dictionary which we read our document and numerate pages in document from pagenumber, filename and text respectively
+4) if name == __main__ means for present file (built in python module) for referring to our current file 
+5) Then comes in role our chunk file which creates small chunks of our document because we have to split our file instead of giving all 303 page response to user for asking question so we define empty dictionary of chunks in which we define start to 0, text as doc["text"] , end as start + chunks_size and chunk text from start to end of text 
+6) Ovewrlapping concept occurs in chunking in which chunks overlap iin order to remember context of previous splitted text 
+7) Better RAG = Better chunking
+8) Types of Chunks: Fixed CHunking , Recursive Chunk (Max Chunk Size defined and we recursively reduce chunk size), Semantic Based Chunk (Meaning zbased Chunks by embedding), Overlapping Chunking (Boundaries of Chunk Overlap like 50 Chunks here and 50 there)
+9) Okay going ahead, we will create embeddings of our data in which we will basically convert our chunks (splitted texts) into embeddings (vector) which represent data in multidimensional coordinates and help us capture semantic meanings in which similar points like "The cat is on mat" and "THe cat is sitting on the mat" would be close enough and angle between them would be less. ***Embeddings are long lists of numbers, called vectors, that capture the semantic meaning of text by placing related concepts close together in a multi-dimensional mathematical space.***
+10) Now comes the part where we will create the FAISS (Facebook AI Similarity Search) index in which we will store our embeddings into vector database and retrieve it with ollama so that user gets its response. FAISS over ChromaDB is used for better understading our database because ChromaDB reduces the manual effort and we dont get to know how cosine similarity is calculated, metadata is linked (file names, page number and text), how retrieval happens, how Eucledean DIstance is calculated and how vectors are stroed.
+11) Here the simple part is retirever where we actually retrieve the data using user generated query in streamlitnfrontend(does not exist yet) and we take query asnd encode it to embedding then search top k indices for better relavant answer and append relavant chunks in result dictionary respectively
